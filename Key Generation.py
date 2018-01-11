@@ -1,11 +1,19 @@
+#This Code written by Fakhr Eldeen Gamal 
+#This is Key Generation Functions for DES Encryption Algorithm 
+
+
+
+#Values of First Permutation Box 
 PC1 = [57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43,
        35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54,
        46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4]
 
+#Values of Second Permutation Box
 PC2 = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7,
        27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39,
        56, 34, 53, 46, 42, 50, 36, 29, 32]
 
+#Rotation Values for each Iteration
 Rotations = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 
 # 3 strings to hold the final C's and D's and String to hold the 16-Keys of DES Rounds 
@@ -26,7 +34,6 @@ def rotate(l, n):
 def concatenate(c, d):
     Key = []
     for i in range(0, len(c)):
-        # print(i," ",c[i]+d[i])
         Key.append(c[i] + d[i])
 
     return Key
@@ -55,10 +62,8 @@ def split(b):
 # perform first permutation on the key using PC1
 def first_permutation(b):
     out = ""
-    # temp = b[::-1]
     temp = b
     for i in range(0, len(PC1)):
-        # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
         out += temp[PC1[i] - 1]
 
     return out
@@ -71,7 +76,6 @@ def second_permutation(b):
     for j in range(0, len(b)):
         temp = b[j]
         for i in range(0, len(PC2)):
-            # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
             out += temp[PC2[i] - 1]
         final_key.append(out)
         out = ""
@@ -96,7 +100,6 @@ def shift(C, D):
     for i in range(1, len(Rotations) ):
         [int_temp.append(int(d)) for d in C_final[i-1]]  # convert C from string to list of booleans to rotate
         int_temp = rotate(int_temp, Rotations[i])
-        # print(Rotations[i-1] , "  ", int_temp)
         C_final.append("".join(str(i) for i in int_temp))
         int_temp = []
         [int_temp.append(int(d)) for d in D_final[i -1]]
@@ -111,7 +114,6 @@ def shift(C, D):
 def print_Keys(k):
     
     for i in range(0, len(k)):
-
         temp = int(k[i], 2)
         Keys.append(format(temp, '02x').upper().zfill(12))
         print(Keys[i])
