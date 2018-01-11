@@ -8,23 +8,29 @@ PC2 = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7,
 
 Rotations = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 
-#2 strings to hold the final C's and D's
+# 3 strings to hold the final C's and D's and String to hold the 16-Keys of DES Rounds 
 global C_final
 global D_final
-C_final =[]
-D_final =[]
+global Keys
+Keys = []
+C_final = []
+D_final = []
 
-#perform left circular shift for a list
+
+# perform left circular shift for a list
 def rotate(l, n):
     return l[n:] + l[:n]
 
-#concatenate C's and D's into K
-def concatenate (c,d):
+
+# concatenate C's and D's into K
+def concatenate(c, d):
     Key = []
-    for i in range(0,len(c)):
-        Key.append(c[i]+d[i])
+    for i in range(0, len(c)):
+        # print(i," ",c[i]+d[i])
+        Key.append(c[i] + d[i])
 
     return Key
+
 
 # convert hex input into binary string
 def convert_to_binary(x):
@@ -49,66 +55,78 @@ def split(b):
 # perform first permutation on the key using PC1
 def first_permutation(b):
     out = ""
+    # temp = b[::-1]
+    temp = b
     for i in range(0, len(PC1)):
-         #64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
-        out += b[64-PC1[i]]
+        # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
+        out += temp[PC1[i] - 1]
 
     return out
+
 
 # perform second permutation on the key using PC2
 def second_permutation(b):
     out = ""
-    final_key =[]
-    for j in range(0,len(b)):
+    final_key = []
+    for j in range(0, len(b)):
         temp = b[j]
         for i in range(0, len(PC2)):
-             #64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
-            out += temp[56-PC2[i]]
+            # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
+            out += temp[PC2[i] - 1]
         final_key.append(out)
-        out =""
+        out = ""
 
     return final_key
 
 
 # perform shift left circular to C,D parts of the key using Rotations table
 def shift(C, D):
-    C_final.append(C)
-    D_final.append(D)
-    int_temp =[]
+    int_temp = [] # temp list to hold integers from converted string(C,D) to use rotate in list 
 
-    for i in range(1, len(Rotations)):
-        [int_temp.append(int(d)) for d in C_final[i-1]] #convert C from string to list of booleans to rotate
-        int_temp = rotate(int_temp , Rotations[i])
-        C_final.append ("".join(str(i) for i in int_temp))
-        int_temp =[]
-        [int_temp.append(int(d)) for d in D_final[i-1]]
-        int_temp = rotate(int_temp , Rotations[i])
-        D_final.append ("".join(str(i) for i in int_temp))
+    [int_temp.append(int(d)) for d in C]  # convert C from string to list of booleans to rotate
+    int_temp = rotate(int_temp, Rotations[0])
 
-    return C_final,D_final
+    C_final.append("".join(str(i) for i in int_temp))
+    int_temp = []
+    [int_temp.append(int(d)) for d in D]
+    int_temp = rotate(int_temp, Rotations[0])
+    D_final.append("".join(str(i) for i in int_temp))
+    int_temp = []
 
-#print keys in hex format
-def print_Keys (k):
-    for i in range (0,len(k)):
-        print (format(k[0], '02x').upper())
+    for i in range(1, len(Rotations) ):
+        [int_temp.append(int(d)) for d in C_final[i-1]]  # convert C from string to list of booleans to rotate
+        int_temp = rotate(int_temp, Rotations[i])
+        # print(Rotations[i-1] , "  ", int_temp)
+        C_final.append("".join(str(i) for i in int_temp))
+        int_temp = []
+        [int_temp.append(int(d)) for d in D_final[i -1]]
+        int_temp = rotate(int_temp, Rotations[i])
+        D_final.append("".join(str(i) for i in int_temp))
+        int_temp = []
+
+    return C_final, D_final
 
 
+# print keys in hex format
+def print_Keys(k):
+    
+    for i in range(0, len(k)):
 
-x = input("Enter hex Value : \n")
-K = convert_to_binary(x)
-K_plus = first_permutation(K)
-print (len(K_plus))
+        temp = int(k[i], 2)
+        Keys.append(format(temp, '02x').upper().zfill(12))
+        print(Keys[i])
 
-C, D = split(K_plus)
-print (len(C))
+       
+# this function when it's called it Generates the 16-Key for DES Rounds using the functions above 
+def key_generation():     
+    x = input()
+    K = convert_to_binary(x)
+    K_plus = first_permutation(K)
+    C, D = split(K_plus)
+    c_f, d_f = shift(C, D)
+    Key = concatenate(c_f, d_f)
+    Key = second_permutation(Key)
+    print_Keys(Key)
+    
+   
 
-c_f ,d_f = shift(C,D)
-print(len(c_f[0]))
-Key = concatenate(c_f,d_f)
-print (len(Key[0]))
-Key = second_permutation(Key)
-
-print_Keys(Key[0])
-
-#
-# print (K[64-PC1[7]])
