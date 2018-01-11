@@ -34,7 +34,6 @@ def rotate(l, n):
 def concatenate(c, d):
     Key = []
     for i in range(0, len(c)):
-        # print(i," ",c[i]+d[i])
         Key.append(c[i] + d[i])
 
     return Key
@@ -63,10 +62,8 @@ def split(b):
 # perform first permutation on the key using PC1
 def first_permutation(b):
     out = ""
-    # temp = b[::-1]
     temp = b
     for i in range(0, len(PC1)):
-        # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
         out += temp[PC1[i] - 1]
 
     return out
@@ -79,7 +76,6 @@ def second_permutation(b):
     for j in range(0, len(b)):
         temp = b[j]
         for i in range(0, len(PC2)):
-            # 64-value in p-box as string is arranged in reverse order of bits first bit is of index 63 in len of 64
             out += temp[PC2[i] - 1]
         final_key.append(out)
         out = ""
@@ -104,7 +100,6 @@ def shift(C, D):
     for i in range(1, len(Rotations) ):
         [int_temp.append(int(d)) for d in C_final[i-1]]  # convert C from string to list of booleans to rotate
         int_temp = rotate(int_temp, Rotations[i])
-        # print(Rotations[i-1] , "  ", int_temp)
         C_final.append("".join(str(i) for i in int_temp))
         int_temp = []
         [int_temp.append(int(d)) for d in D_final[i -1]]
@@ -119,7 +114,6 @@ def shift(C, D):
 def print_Keys(k):
     
     for i in range(0, len(k)):
-
         temp = int(k[i], 2)
         Keys.append(format(temp, '02x').upper().zfill(12))
         print(Keys[i])
